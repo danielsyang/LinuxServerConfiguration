@@ -81,13 +81,68 @@ exit
 5. Change ItemCatalogProject to FlaskApp by typing `sudo mv ItemCatalogProject/ FlaskApp/`
 6. `cd FlaskApp\`
 7. Rename item_catalog_project.py to __init__.py `sudo mv item_catalog_project.py __init__.py`
-8. Edit __init__.py, database_setup.py and database_init.py and change
-`engine = create_engine('sqlite:///itemcatalogwithcategory.db')` 
-to
-`engine = create_engine('postgresql://catalog:123asd@localhost/catalog'`
+8. Edit __init__.py, database_setup.py and database_init.py and change `engine = reate_engine('sqlite:///itemcatalogwithcategory.db')` to `engine = create_engine('postgresql://catalog:123asd@localhost/catalog'`
 9. Install pip `sudo apt-get install python-pip`
 10. Create a file dependencies `touch dependencies`
 11. `sudo nano dependencies` and paste 
 ```
-
+werkzeug==0.8.3
+flask==0.9
+Flask-Login==0.1.3
+oauth2client
+requests
+httplib2
+SQLAlchemy==0.7.4
 ```
+12. Install dependencies `sudo pip install -r dependencies`
+13. Install psycopg2  `sudo apt-get -qqy install postgresql python-psycopg2`
+14. Create and setup database.
+```
+python database_setup.py
+python database_init.py
+```
+
+#### Configuring virtual host
+1. `sudo nano /etc/apache2/sites-available/FlaskApp.conf
+2. Paste, save and quit the following text.
+```
+<VirtualHost *:80>
+    ServerName 52.25.0.212
+    ServerAdmin shu.minyang@hotmail.com
+    WSGIScriptAlias / /var/www/FlaskApp/flaskapp.wsgi
+    <Directory /var/www/FlaskApp/FlaskApp/>
+        Order allow,deny
+        Allow from all
+    </Directory>
+    Alias /static /var/www/FlaskApp/FlaskApp/static
+    <Directory /var/www/FlaskApp/FlaskApp/static/>
+        Order allow,deny
+        Allow from all
+    </Directory>
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    LogLevel warn
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+</VirtualHost>
+```
+3. Enable virtual host by typing `sudo a2ensite FlaskApp`
+
+#### Creating .wsgi file
+1. `touch /var/www/FlaskAppflaskapp.wsgi`
+2. `sudo nano /var/www/FlaskAppflaskapp.wsgi`
+3. Add the following text then save and quit.
+```
+#!/usr/bin/python
+import sys
+import logging
+logging.basicConfig(stream=sys.stderr)
+sys.path.insert(0,"/var/www/FlaskApp/")
+
+from FlaskApp import app as application
+application.secret_key = 'super_secret_key'
+```
+
+#### Restarting Apache
+1. `sudo service apache2 restart`
+
+#### Conclusion
+After all of those step, ItemCatalogProject should be available on http://52.25.0.212/
