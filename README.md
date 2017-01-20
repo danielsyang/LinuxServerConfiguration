@@ -73,4 +73,21 @@ GRANT ALL PRIVILEGES ON DATABASE catalog TO catalog
 exit
 ```
 
+#### Installing GIT and and setting up Item Catalog Project
+1. `sudo apt-get install git`
+2. `sudo mkdir /var/www/FlaskApp`
+3. `cd /var/www/FlaskApp`
+4. `sudo git clone https://github.com/shuminyang/ItemCatalogProject`
+5. Change ItemCatalogProject to FlaskApp by typing `sudo mv ItemCatalogProject/ FlaskApp/`
+6. `cd FlaskApp\`
+7. Rename item_catalog_project.py to __init__.py `sudo mv item_catalog_project.py __init__.py`
+8. Edit __init__.py, database_setup.py and database_init.py and change
+`engine = create_engine('sqlite:///itemcatalogwithcategory.db')` 
+to
+`engine = create_engine('postgresql://catalog:123asd@localhost/catalog'`
+9. Install pip `sudo apt-get install python-pip`
+10. Create a file dependencies `touch dependencies`
+11. `sudo nano dependencies` and paste 
+```
 
+```
